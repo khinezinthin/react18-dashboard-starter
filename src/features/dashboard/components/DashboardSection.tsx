@@ -1,4 +1,4 @@
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { PROJECT_STATUSES, projectSchema } from "../schema/project";
@@ -10,9 +10,9 @@ import {
   FieldGroup,
   FieldLabel,
   FieldLegend,
+  FieldSeparator,
   FieldSet,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -23,7 +23,14 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SelectGroup, SelectLabel } from "@radix-ui/react-select";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { XIcon } from "lucide-react";
+import FormInput from "@/components/form/Form";
 
 const DashboardSection = () => {
   const form = useForm({
@@ -36,6 +43,11 @@ const DashboardSection = () => {
         sms: false,
         push: false,
       },
+      users: [
+        {
+          email: "",
+        },
+      ],
     },
     resolver: zodResolver(projectSchema),
   });
@@ -43,26 +55,22 @@ const DashboardSection = () => {
   const handleProjectCreate = (data: z.infer<typeof projectSchema>) => {
     console.log(data);
   };
+
+  const {
+    fields: users,
+    append: addUser,
+    remove: removeUser,
+  } = useFieldArray({
+    control: form.control,
+    name: "users",
+  });
   return (
     <section>
       Home Dashboard
       <form onSubmit={form.handleSubmit(handleProjectCreate)}>
         <FieldGroup>
-          <Controller
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
-                <Input
-                  {...field}
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                />
-                {fieldState.error && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
+          <FormInput control={form.control} name={"name"} label={"Name"}/>
+          
 
           <Controller
             control={form.control}
@@ -206,6 +214,64 @@ const DashboardSection = () => {
                   </Field>
                 )}
               />
+            </FieldGroup>
+          </FieldSet>
+
+          <FieldSeparator />
+
+          <FieldSet>
+            <div className=" flex justify-between">
+              <FieldContent>
+                <FieldLegend variant="label" className="mb-0">
+                  User Emial Address
+                </FieldLegend>
+                <FieldDescription>
+                  Add up to 5 users to this project
+                </FieldDescription>
+                {form.formState.errors.users?.root && (
+                  <FieldError errors={[form.formState.errors.users?.root]} />
+                )}
+              </FieldContent>
+
+              <Button
+                variant={"outline"}
+                size={"sm"}
+                type="button"
+                onClick={() => addUser({ email: "" })}
+              >
+                Add User Email
+              </Button>
+            </div>
+            <FieldGroup>
+              {users.map((user, index) => (
+                <div key={user.id}>
+                  <Controller
+                    control={form.control}
+                    name={`users.${index}.email`}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <InputGroup>
+                          <InputGroupInput
+                            {...field}
+                            id={field.name}
+                            aria-invalid={fieldState.invalid}
+                            aria-label={`users.${index + 1}.email`}
+                          />
+                          <InputGroupAddon align="inline-end">
+                            <InputGroupButton type="button" aria-label={`Remove user ${index + 1}`} onClick={() => removeUser(index)}>
+                              <XIcon />
+                            </InputGroupButton>
+                          </InputGroupAddon>
+                        </InputGroup>
+
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                </div>
+              ))}
             </FieldGroup>
           </FieldSet>
 
