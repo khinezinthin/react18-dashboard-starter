@@ -1,4 +1,3 @@
-
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import DashboardPage from "@/pages/home/DashboardPage";
@@ -10,6 +9,7 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
+
   {
     path: "/",
     element: <DashboardLayout />,

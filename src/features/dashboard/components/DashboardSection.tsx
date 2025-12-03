@@ -8,21 +8,12 @@ import {
   FieldDescription,
   FieldError,
   FieldGroup,
-  FieldLabel,
   FieldLegend,
   FieldSeparator,
   FieldSet,
 } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   InputGroup,
   InputGroupAddon,
@@ -30,7 +21,16 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { XIcon } from "lucide-react";
-import FormInput from "@/components/form/Form";
+import {
+  FormInput,
+  FormCheckbox,
+  FormSelect,
+  FormTextarea,
+  FormPassword,
+  FormPasswordWithToggle,
+  FormFileInput,
+  FormFileInput2,
+} from "@/components/form";
 
 const DashboardSection = () => {
   const form = useForm({
@@ -38,7 +38,11 @@ const DashboardSection = () => {
       name: "",
       status: "draft" as const,
       description: "",
-      notification: {
+      password: "",
+      confirmPassword: "",
+      image: null,
+      image2: null,
+      notifications: {
         email: false,
         sms: false,
         push: false,
@@ -67,217 +71,153 @@ const DashboardSection = () => {
   return (
     <section>
       Home Dashboard
-      <form onSubmit={form.handleSubmit(handleProjectCreate)}>
-        <FieldGroup>
-          <FormInput control={form.control} name={"name"} label={"Name"}/>
-          
+      <div className="container px-4 mx-auto my-6">
+        <form onSubmit={form.handleSubmit(handleProjectCreate)}>
+          <FieldGroup>
+            <FormInput control={form.control} name="name" label="Name" />
 
-          <Controller
-            control={form.control}
-            name="description"
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldContent>
-                  <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                  <FieldDescription>
-                    Be as specific as possible
-                  </FieldDescription>
-                </FieldContent>
-                <Textarea
-                  {...field}
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                />
-                {fieldState.error && <FieldError errors={[fieldState.error]} />}
-              </Field>
-            )}
-          />
+            <FormSelect control={form.control} name="status" label="Status">
+              {PROJECT_STATUSES.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status}
+                </SelectItem>
+              ))}
+            </FormSelect>
 
-          <Controller
-            control={form.control}
-            name="status"
-            render={({ field: { onChange, onBlur, ...field }, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor={field.name}>Status</FieldLabel>
-                <Select {...field} onValueChange={onChange}>
-                  <SelectTrigger
-                    id={field.name}
-                    onBlur={onBlur}
-                    aria-invalid={fieldState.invalid}
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PROJECT_STATUSES.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+            <FormTextarea
+              control={form.control}
+              name="description"
+              label="Description"
+              description="Be as detailed as possible"
+            />
 
-          <FieldSet>
-            <FieldContent>
+            <FormPassword
+              control={form.control}
+              name="password"
+              label="Password"
+              description="Enter your password"
+            />
+
+            <FormPasswordWithToggle
+              control={form.control}
+              name="confirmPassword"
+              label="Confirm Password"
+              description="Confirm your password with show/hide toggle"
+            />
+
+            <FormFileInput
+              control={form.control}
+              name="image"
+              label="Image Upload"
+              description="Upload an image file (drag and drop or click to select)"
+              accept="image/*"
+              showPreview={true}
+            />
+
+            <FormFileInput2
+              control={form.control}
+              name="image2"
+              label="File Upload (Shadcn Input)"
+              description="Standard file input using shadcn Input component"
+              accept="image/*"
+            />
+
+            <FieldSet>
               <FieldLegend>Notifications</FieldLegend>
               <FieldDescription>
-                Select how you would like toreceie notifications
+                Select how you would like to receive notifications.
               </FieldDescription>
-            </FieldContent>
+              <FieldGroup data-slot="checkbox-group">
+                <FormCheckbox
+                  name="notifications.email"
+                  label="Email"
+                  control={form.control}
+                />
+                <FormCheckbox
+                  name="notifications.sms"
+                  label="Text"
+                  control={form.control}
+                />
+                <FormCheckbox
+                  name="notifications.push"
+                  label="In App"
+                  control={form.control}
+                />
+              </FieldGroup>
+            </FieldSet>
 
-            <FieldGroup data-slot="checkbox-group">
-              <Controller
-                control={form.control}
-                name="notification.email"
-                render={({
-                  field: { value, onChange, ...field },
-                  fieldState,
-                }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation={"horizontal"}
-                  >
-                    <Checkbox
-                      {...field}
-                      id={field.name}
-                      aria-invalid={fieldState.invalid}
-                      checked={value}
-                      onCheckedChange={onChange}
-                    />
-                    <FieldContent>
-                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                      {fieldState.error && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </FieldContent>
-                  </Field>
-                )}
-              />
+            <FieldSeparator />
 
-              <Controller
-                control={form.control}
-                name="notification.sms"
-                render={({
-                  field: { value, onChange, ...field },
-                  fieldState,
-                }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation={"horizontal"}
-                  >
-                    <Checkbox
-                      {...field}
-                      id={field.name}
-                      aria-invalid={fieldState.invalid}
-                      checked={value}
-                      onCheckedChange={onChange}
-                    />
-                    <FieldContent>
-                      <FieldLabel htmlFor={field.name}>Text</FieldLabel>
-                      {fieldState.error && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </FieldContent>
-                  </Field>
-                )}
-              />
-
-              <Controller
-                control={form.control}
-                name="notification.push"
-                render={({
-                  field: { value, onChange, ...field },
-                  fieldState,
-                }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    orientation={"horizontal"}
-                  >
-                    <Checkbox
-                      {...field}
-                      id={field.name}
-                      aria-invalid={fieldState.invalid}
-                      checked={value}
-                      onCheckedChange={onChange}
-                    />
-                    <FieldContent>
-                      <FieldLabel htmlFor={field.name}>In App</FieldLabel>
-                      {fieldState.error && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </FieldContent>
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </FieldSet>
-
-          <FieldSeparator />
-
-          <FieldSet>
-            <div className=" flex justify-between">
-              <FieldContent>
-                <FieldLegend variant="label" className="mb-0">
-                  User Emial Address
-                </FieldLegend>
-                <FieldDescription>
-                  Add up to 5 users to this project
-                </FieldDescription>
-                {form.formState.errors.users?.root && (
-                  <FieldError errors={[form.formState.errors.users?.root]} />
-                )}
-              </FieldContent>
-
-              <Button
-                variant={"outline"}
-                size={"sm"}
-                type="button"
-                onClick={() => addUser({ email: "" })}
-              >
-                Add User Email
-              </Button>
-            </div>
-            <FieldGroup>
-              {users.map((user, index) => (
-                <div key={user.id}>
+            <FieldSet>
+              <div className="flex justify-between gap-2 items-center">
+                <FieldContent>
+                  <FieldLegend variant="label" className="mb-0">
+                    User Email Addresses
+                  </FieldLegend>
+                  <FieldDescription>
+                    Add up to 5 users to this project (including yourself).
+                  </FieldDescription>
+                  {form.formState.errors.users?.root && (
+                    <FieldError errors={[form.formState.errors.users.root]} />
+                  )}
+                </FieldContent>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addUser({ email: "" })}
+                >
+                  Add User
+                </Button>
+              </div>
+              <FieldGroup>
+                {users.map((user, index) => (
                   <Controller
-                    control={form.control}
+                    key={user.id}
                     name={`users.${index}.email`}
+                    control={form.control}
                     render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        <InputGroup>
-                          <InputGroupInput
-                            {...field}
-                            id={field.name}
-                            aria-invalid={fieldState.invalid}
-                            aria-label={`users.${index + 1}.email`}
-                          />
-                          <InputGroupAddon align="inline-end">
-                            <InputGroupButton type="button" aria-label={`Remove user ${index + 1}`} onClick={() => removeUser(index)}>
-                              <XIcon />
-                            </InputGroupButton>
-                          </InputGroupAddon>
-                        </InputGroup>
-
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
+                      <Field
+                        orientation="horizontal"
+                        data-invalid={fieldState.invalid}
+                      >
+                        <FieldContent>
+                          <InputGroup>
+                            <InputGroupInput
+                              {...field}
+                              id={`${field.name}-${index}`}
+                              aria-invalid={fieldState.invalid}
+                              aria-label={`User ${index + 1} email`}
+                              type="email"
+                            />
+                            {users.length > 1 && (
+                              <InputGroupAddon align="inline-end">
+                                <InputGroupButton
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  onClick={() => removeUser(index)}
+                                  aria-label={`Remove User ${index + 1}`}
+                                >
+                                  <XIcon />
+                                </InputGroupButton>
+                              </InputGroupAddon>
+                            )}
+                          </InputGroup>
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </FieldContent>
                       </Field>
                     )}
                   />
-                </div>
-              ))}
-            </FieldGroup>
-          </FieldSet>
-
-          <Button>Submit</Button>
-        </FieldGroup>
-      </form>
+                ))}
+              </FieldGroup>
+            </FieldSet>
+            <Button type="submit">Create</Button>
+          </FieldGroup>
+        </form>
+      </div>
     </section>
   );
 };
