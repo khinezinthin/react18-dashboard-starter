@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import LoginPage from "@/pages/auth/LoginPage";
 import DashboardPage from "@/pages/home/DashboardPage";
-import UserPage from "@/pages/user/UserPage";
+import ProductPage from "@/pages/product/ProductPage";
 import { createBrowserRouter, Navigate } from "react-router";
 
 const router = createBrowserRouter([
@@ -19,8 +19,8 @@ const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: "user",
-        element: <UserPage />,
+        path: "products",
+        element: <ProductPage />,
       },
     ],
   },

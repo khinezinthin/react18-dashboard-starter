@@ -1,5 +1,5 @@
 import { Calendar, Home, Inbox, LogOut, type LucideIcon } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 
 import {
   Sidebar,
@@ -30,10 +30,10 @@ const items: NavItem[] = [
 
   // sub menu
   {
-    title: "User",
+    title: "Products",
     icon: Inbox,
     children: [
-      { title: "User Create", url: "/user", icon: Inbox },
+      { title: "Product", url: "/products", icon: Inbox },
 
       { title: "dashboard", url: "/", icon: Calendar },
     ],
@@ -43,7 +43,7 @@ const items: NavItem[] = [
     title: "app",
     icon: Inbox,
     children: [
-      { title: "User Create", url: "/user", icon: Inbox },
+      { title: "Product", url: "/products", icon: Inbox },
 
       { title: "dashboard", url: "/", icon: Calendar },
     ],
