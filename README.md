@@ -71,8 +71,3 @@ export default defineConfig([
   },
 ])
 ```
-Step,Command / Action,Notes
-1.,Install Packages,npm install i18next react-i18next i18next-browser-languagedetector
-2.,Create Configuration,Create and configure the src/i18n.js file.
-3.,Initialize App,Ensure src/index.js imports the i18n file to initialize the context.
-4.,See Usage,Refer to the LanguageSwitcher component for usage examples of useTranslation.
